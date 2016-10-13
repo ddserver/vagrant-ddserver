@@ -1,0 +1,26 @@
+
+Welcome to your ddserver test system.
+
+This virtual machine is configured with all the tools needed to run ddserver.
+
+MySQL has been configured with no root password. The database for ddserver is
+called "ddserver" and can be acceddes by the ddserver user "ddserver", who has
+its password set to "YourDatabasePassword".
+
+PowerDNS has been configured with the simplebind backend to provide the zone
+example.org with common resource records (SOA and NS). To allow ddserver to
+communicate with PowerDNS, {{ pdns_backend }} has been installed.
+
+The ddserver repository has been checked out to /usr/local/src/ddserver.
+
+You can login to the ddserver web-ui by navigating to 127.0.0.1:8080 with 
+username admin and password admin. In the web-ui, create a zone example.org and 
+some hostnames (i.e., test) in this zone. Using a command like dig, you can then
+query your hostnames as follows:
+
+  dig test.example.org @127.0.0.1 [-p 5353]
+
+If you have any questions, please refer to the documentation at https://ddserver.org
+
+Have fun.
+
