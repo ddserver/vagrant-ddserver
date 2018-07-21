@@ -11,11 +11,11 @@ mysql_connector:
 
 mysql_connector.build:
   cmd.run:
-    - name: {{ pillar.ddserver.python }} setup.py build
+    - name: /usr/bin/{{ pillar.ddserver.python }} setup.py build
     - cwd: /usr/local/src/mysql-connector-python
 
 mysql_connector.install:
   cmd.run:
-    - name: {{ pillar.ddserver.python }} setup.py install
+    - name: /usr/bin/{{ pillar.ddserver.python }} setup.py install
     - cwd: /usr/local/src/mysql-connector-python
 

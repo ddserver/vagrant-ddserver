@@ -3,7 +3,11 @@ apache2:
   pkg.installed:
     - pkgs:
       - apache2
+{% if pillar.ddserver.python.startswith('python2') %}
       - libapache2-mod-wsgi
+{% else %}
+      - libapache2-mod-wsgi-py3
+{% endif %}
 
   service.running:
     - enable: True

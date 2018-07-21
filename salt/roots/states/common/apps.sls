@@ -11,6 +11,7 @@ common.apps:
       - libmysqlclient-dev 
       - python-dev
       - python-pip
+      - python3-pip
 
   cmd.run:
     - name: pip install --upgrade setuptools

@@ -36,15 +36,15 @@ ddserver.config:
     - target: /etc/ddserver/ddserver.conf.example
 
 ddserver.service:
-  file.symlink:
-    - name: /etc/init.d/ddserver-bundle
-    - target: /usr/share/doc/ddserver/debian.init.d/ddserver
-    - mode: 755
+  file.managed:
+    - name: /etc/systemd/system/ddserver-bundle.service
+    - source: salt://ddserver/files/ddserver-bundle.service
+    - mode: 644
     - user: root
     - group: root
 
   service.running:
-    - name: ddserver
+    - name: ddserver-bundle
     - enable: True
 
 
@@ -63,6 +63,7 @@ include:
 
   virtualenv.managed:
     - system_site_packages: False
+    - python: /usr/bin/{{ pillar.ddserver.python }}
     - no_chown: True
 
   cmd.run:

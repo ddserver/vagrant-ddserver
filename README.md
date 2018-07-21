@@ -28,7 +28,7 @@ Requirements:
 - VirtualBox > 4.2 (http://www.virtualbox.org)
 - Vagrant > 1.4 (http://www.vagrantup.com)
 - Git (http://www.git-scm.com)
-- *nix based operating system is preferred
+- *nix based operating system
 
 By default the virtual machine uses a no-worry private NAT network interface.
 To give you access to the virtual machine services there are some pre-configured
@@ -52,12 +52,12 @@ Usage:
 6. Point your browser to http://localhost:8080
    - You can login with the default username and password: admin
    - For testing you can do the following:
-     - Add a zone, i.e. example.com
-     - Add a hostname, i.e. test.example.com
+     - Add a zone, i.e. example.org
+     - Add a hostname, i.e. test.example.org
      - Use dig or nslookup to query the DNS server on localhost:5353 for your hostname
 
 You can log into the VM with username `vagrant` and password `vagrant`.
-To get root access, use `sudo -i`. The root password is ser to `vagrant` as well.
+To get root access, use `sudo -i`. The root password is set to `vagrant` as well.
 
 
 Under the hood
@@ -93,12 +93,12 @@ ddserver
   - Start ddserver on port 8080
 
 
-Customization through Vagrantfile
----------------------------------
+Customization
+-------------
 If you want to run your Vagrant with a different branch or a fork of ddserver
 you can configure the git URL and branch parameter in the saltstack pillar:
     salt/roots/pillar/ddserver.sls
 
-
+To change the port forwardings or the vagrant basebox, edit the Vagrantfile.
 
 Have fun.

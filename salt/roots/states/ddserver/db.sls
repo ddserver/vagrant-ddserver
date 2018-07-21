@@ -1,9 +1,4 @@
 ---
-{% if pillar.ddserver.version < 0.3 %}
-{% set ddserver_dir = "/usr/share/doc/ddserver" %}
-{% else %}
-{% set ddserver_dir = "/opt/ddserver/lib/python2.7/site-packages/ddserver*.egg/doc/db" %}
-{% endif %}
 
 # Create ddserver database, database user,
 # and import the ddserver database schema
@@ -29,7 +24,11 @@ ddserver.db:
       - pkg: mysql
 
   cmd.run:
-    - name: mysql -u root ddserver < {{ ddserver_dir }}/schema.sql
+{% if pillar.ddserver.version < 0.3 %}
+    - name: mysql -u root ddserver < /usr/share/doc/ddserver/schema.sql
+{% else %}
+    - name: mysql -u root ddserver < $(/opt/ddserver/bin/python -c 'import os; import ddserver; print(os.path.dirname(ddserver.__file__))')/resources/doc/schema.sql
+{% endif %}
     - watch:
       - mysql_database: ddserver.db
     - require:

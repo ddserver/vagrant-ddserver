@@ -2,7 +2,8 @@
 
 Welcome to your ddserver test system.
 
-This virtual machine is configured with all the tools needed to run ddserver.
+This virtual machine is configured with all the tools needed to run ddserver,
+and to provide a demo environment.
 
 MySQL has been configured with no root password. The database for ddserver is
 called "ddserver" and can be acceddes by the ddserver user "ddserver", who has
@@ -13,6 +14,8 @@ example.org with common resource records (SOA and NS). To allow ddserver to
 communicate with PowerDNS, {{ pdns_backend }} has been installed.
 
 The ddserver repository has been checked out to /usr/local/src/ddserver.
+For versions >= 0.3, a virtual environment has been created in /opt/ddserver,
+and the ddserver-bundle is running as WSGI application.
 
 You can login to the ddserver WebUI from your host system by navigating to
 http://127.0.0.1:8080 using your preferred web browser. The username and
