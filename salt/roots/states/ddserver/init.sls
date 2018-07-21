@@ -33,7 +33,7 @@ ddserver:
 ddserver.config:
   file.symlink:
     - name: /etc/ddserver/ddserver.conf
-    - target: /etc/ddserver/files/ddserver.conf.example
+    - target: /etc/ddserver/ddserver.conf.example
 
 ddserver.service:
   file.symlink:
