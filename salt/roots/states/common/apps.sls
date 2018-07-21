@@ -1,3 +1,4 @@
+---
 common.apps:
   pkg.installed:
     - pkgs:

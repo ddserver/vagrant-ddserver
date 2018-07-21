@@ -1,3 +1,4 @@
+---
 powerdns:
   pkg.installed:
     - pkgs: 
@@ -23,7 +24,7 @@ pdns.local.conf:
     - user: root
     - group: root
     - mode: 640
-    - source: salt://powerdns/pdns.local.conf
+    - source: salt://powerdns/files/pdns.local.conf
     - require:
       - pkg: powerdns
 

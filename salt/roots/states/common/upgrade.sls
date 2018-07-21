@@ -1,3 +1,4 @@
+---
 common.update:
   cmd.wait:
     - name: apt-get update

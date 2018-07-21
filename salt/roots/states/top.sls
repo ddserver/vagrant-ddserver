@@ -1,3 +1,4 @@
+---
 base:
   '*':
     - common.upgrade
@@ -9,3 +10,5 @@ base:
 
     - ddserver.mysql_connector
     - ddserver
+    - ddserver.db
+    - ddserver.pdns

@@ -1,3 +1,4 @@
+---
 mysql:
   pkg.installed:
     - pkgs:

@@ -1,6 +1,7 @@
-# Install ddserver
+---
+# Clone the ddserver repo
 #
-ddserver:
+ddserver-repo:
   git.latest:
     - name: {{ pillar.ddserver.repo }} 
     - rev: {{ pillar.ddserver.branch }}
@@ -9,18 +10,9 @@ ddserver:
       - pkg: common.apps
       - git: mysql_connector
 
-  cmd.run:
-    - name: {{ pillar.ddserver.python }} setup.py install
-    - cwd: /usr/local/src/ddserver
 
-
-# Add ddserver configuration and logfile
+# Create the ddserver logfile
 #
-ddserver.config:
-  file.symlink:
-    - name: /etc/ddserver/ddserver.conf
-    - target: /etc/ddserver/ddserver.conf.example
-
 ddserver.logfile:
   file.managed:
     - name: /var/log/ddserver.log
@@ -29,49 +21,25 @@ ddserver.logfile:
     - mode: 777
 
 
-# Create ddserver db, db_user and import schema
+# If a ddserver version prior to 0.3 is being deployed, just install
+# using setuptools, create an init script, and start the service.
 #
-ddserver.db:
-  mysql_database.present:
-    - name: ddserver
-    - require:
-      - pkg: mysql
-
-  mysql_user.present:
-    - name: ddserver
-    - password: YourDatabasePassword
-    - host: localhost
-    - require:
-      - pkg: mysql
-
-  mysql_grants.present:
-    - grant: all privileges
-    - database: ddserver.*
-    - user: ddserver
-    - require:
-      - pkg: mysql
-
+{% if pillar.ddserver.version < 0.3 %}
+ddserver:
   cmd.run:
-    - name: mysql -u root ddserver < /usr/share/doc/ddserver/schema.sql
-    - watch:
-      - mysql_database: ddserver.db
-    - require:
-      - pkg: mysql
+    - name: {{ pillar.ddserver.python }} setup.py install
+    - cwd: /usr/local/src/ddserver
 
+ddserver.config:
+  file.symlink:
+    - name: /etc/ddserver/ddserver.conf
+    - target: /etc/ddserver/files/ddserver.conf.example
 
-# Create systemd service or init file
-#
 ddserver.service:
   file.symlink:
-  {% if pillar.ddserver.version < 0.3 %}
     - name: /etc/init.d/ddserver-bundle
     - target: /usr/share/doc/ddserver/debian.init.d/ddserver
     - mode: 755
-  {% else %}
-    - name: /etc/systemd/system/ddserver.service
-    - target: /usr/share/doc/ddserver/systemd/ddserver.service
-    - mode: 644
-  {% endif %}
     - user: root
     - group: root
 
@@ -80,37 +48,58 @@ ddserver.service:
     - enable: True
 
 
-# Create recursor configuration
+# If ddserver version >= 0.3 is being deployed, create a virtualenv,
+# install ddserver into the venv, and run it as a WSGI application
+# using the apache2 webserver.
 #
-ddserver.recursor:
-  file.managed:
-    - name: /etc/powerdns/pdns.d/pdns.ddserver.conf
-    {% if pillar.ddserver.version < 0.3 %}
-    - source: salt://ddserver/pdns.ddserver_pipe.conf
-    {% else %}
-    - source: salt://ddserver/pdns.ddserver_remote.conf
-    {% endif %}
-    - user: root
-    - group: root
-    - mode: 644
+{% else %}
+
+include:
+  - apache2
+
+/opt/ddserver:
+  pkg.installed:
+    - name: virtualenv
+
+  virtualenv.managed:
+    - system_site_packages: False
+    - no_chown: True
+
+  cmd.run:
+    - name: |
+        cd /opt/ddserver
+        source ./bin/activate
+        pip install setuptools --upgrade
+        cd /usr/local/src/ddserver
+        python setup.py install
 
 
-# Add ddserver zone (SOA and NS records) 
-# using the pdns simplebind backend
-#
-ddserver.bindbackend:
-  file.managed:
-    - name: /etc/powerdns/bindbackend.conf
-    - source: salt://ddserver/bindbackend.conf
-    - user: root
-    - group: root
-    - mode: 644
+ddserver.config:
+  file.directory:
+    - name: /etc/ddserver
 
-ddserver.zone:
+  cmd.run:
+    - name: |
+        ln -s $(/opt/ddserver/bin/python -c 'import os; import ddserver; print(os.path.dirname(ddserver.__file__))')/resources/doc/ddserver.conf.example /etc/ddserver/ddserver.conf
+
+
+/etc/ddserver/ddserver.wsgi:
+  cmd.run:
+    - name: |
+        ln -s $(/opt/ddserver/bin/python -c 'import os; import ddserver; print(os.path.dirname(ddserver.__file__))')/resources/doc/ddserver.wsgi /opt/ddserver/
+
+
+/etc/apache2/sites-available/default.conf:
   file.managed:
-    - name: /etc/powerdns/zones/example.org.zone
-    - source: salt://ddserver/example.org.zone
-    - user: root
-    - group: root
-    - mode: 644
-    - makedirs: True
+    - source: salt://ddserver/files/default-vhost.conf
+    - require:
+      - pkg: apache2
+    - require_in:
+      - file: /etc/apache2/sites-available
+
+  cmd.run:
+    - name: |
+        a2ensite default
+        systemctl reload apache2
+
+{% endif %}

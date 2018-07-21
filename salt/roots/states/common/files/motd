@@ -1,4 +1,5 @@
 
+
 Welcome to your ddserver test system.
 
 This virtual machine is configured with all the tools needed to run ddserver.
@@ -13,14 +14,16 @@ communicate with PowerDNS, {{ pdns_backend }} has been installed.
 
 The ddserver repository has been checked out to /usr/local/src/ddserver.
 
-You can login to the ddserver web-ui by navigating to 127.0.0.1:8080 with 
-username admin and password admin. In the web-ui, create a zone example.org and 
-some hostnames (i.e., test) in this zone. Using a command like dig, you can then
-query your hostnames as follows:
+You can login to the ddserver WebUI from your host system by navigating to
+http://127.0.0.1:8080 using your preferred web browser. The username and
+password of the administrator is "admin". In the WebUI, create a zone called
+"example.org" and add some hostnames (i.e., test) to the zone. Using a command
+like dig, you can then query your hostnames as follows:
 
   dig test.example.org @127.0.0.1 [-p 5353]
 
-If you have any questions, please refer to the documentation at https://ddserver.org
+If you have any questions, please refer to the documentation at
+https://docs.ddserver.org
 
 Have fun.
 
