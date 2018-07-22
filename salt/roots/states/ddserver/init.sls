@@ -87,7 +87,7 @@ ddserver.config:
 /etc/ddserver/ddserver.wsgi:
   cmd.run:
     - name: |
-        ln -s $(/opt/ddserver/bin/python -c 'import os; import ddserver; print(os.path.dirname(ddserver.__file__))')/resources/doc/ddserver.wsgi /opt/ddserver/
+        ln -s $(/opt/ddserver/bin/python -c 'import os; import ddserver; print(os.path.dirname(ddserver.__file__))')/resources/doc/wsgi/ddserver.wsgi /opt/ddserver/
 
 
 /etc/apache2/sites-available/default.conf:
